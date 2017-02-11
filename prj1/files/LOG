@@ -1,0 +1,551 @@
+#build project
+$ make
+cc -g -Wall -fms-extensions -std=c11 -I/home/umrigar/cs551-17s/include  -c -o abstract_matrix.o abstract_matrix.c
+cc -g -Wall -fms-extensions -std=c11 -I/home/umrigar/cs551-17s/include  -c -o dense_matrix.o dense_matrix.c
+cc -g -Wall -fms-extensions -std=c11 -I/home/umrigar/cs551-17s/include  -c -o main.o main.c
+cc -g -Wall -fms-extensions -std=c11 -I/home/umrigar/cs551-17s/include  -c -o smart_mul_matrix.o smart_mul_matrix.c
+cc abstract_matrix.o dense_matrix.o main.o smart_mul_matrix.o -L /home/umrigar/cs551-17s/lib -lcs551 -o prj1
+
+#show usage
+$ ./prj1 
+usage: ./prj1 ( (--output | -o) | (--predefined-tests | -t) | (--random-tests | -r) | (--perf-matrix-size S | -s S) )+
+
+#exercise all options
+$ ./prj1 --pred --rand -o --perf 1000
+input matrix A[3][3] using denseMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+transpose matrix 
+       1       4       7
+       2       5       8
+       3       6       9
+------------
+input matrix A[3][3] using smartMulMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+transpose matrix 
+       1       4       7
+       2       5       8
+       3       6       9
+------------
+input matrix B[3][2] using denseMatrix 
+       1       2
+       3       4
+       5       6
+transpose matrix 
+       1       3       5
+       2       4       6
+------------
+input matrix B[3][2] using smartMulMatrix 
+       1       2
+       3       4
+       5       6
+transpose matrix 
+       1       3       5
+       2       4       6
+------------
+multiplicand A[3][3] using denseMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+multiplier A[3][3] using denseMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+product: A[3][3] using denseMatrix  x  A[3][3] using denseMatrix 
+      30      36      42
+      66      81      96
+     102     126     150
+------------
+multiplicand A[3][3] using denseMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+multiplier A[3][3] using smartMulMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+product: A[3][3] using denseMatrix  x  A[3][3] using smartMulMatrix 
+      30      36      42
+      66      81      96
+     102     126     150
+------------
+multiplicand A[3][3] using smartMulMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+multiplier A[3][3] using denseMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+product: A[3][3] using smartMulMatrix  x  A[3][3] using denseMatrix 
+      30      36      42
+      66      81      96
+     102     126     150
+------------
+multiplicand A[3][3] using smartMulMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+multiplier A[3][3] using smartMulMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+product: A[3][3] using smartMulMatrix  x  A[3][3] using smartMulMatrix 
+      30      36      42
+      66      81      96
+     102     126     150
+------------
+multiplicand A[3][3] using denseMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+multiplier B[3][2] using denseMatrix 
+       1       2
+       3       4
+       5       6
+product: A[3][3] using denseMatrix  x  B[3][2] using denseMatrix 
+      22      28
+      49      64
+      76     100
+------------
+multiplicand A[3][3] using denseMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+multiplier B[3][2] using smartMulMatrix 
+       1       2
+       3       4
+       5       6
+product: A[3][3] using denseMatrix  x  B[3][2] using smartMulMatrix 
+      22      28
+      49      64
+      76     100
+------------
+multiplicand A[3][3] using smartMulMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+multiplier B[3][2] using denseMatrix 
+       1       2
+       3       4
+       5       6
+product: A[3][3] using smartMulMatrix  x  B[3][2] using denseMatrix 
+      22      28
+      49      64
+      76     100
+------------
+multiplicand A[3][3] using smartMulMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+multiplier B[3][2] using smartMulMatrix 
+       1       2
+       3       4
+       5       6
+product: A[3][3] using smartMulMatrix  x  B[3][2] using smartMulMatrix 
+      22      28
+      49      64
+      76     100
+------------
+multiplicand B[3][2] using denseMatrix 
+       1       2
+       3       4
+       5       6
+multiplier A[3][3] using denseMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+product error: Numerical argument out of domain
+multiplicand B[3][2] using denseMatrix 
+       1       2
+       3       4
+       5       6
+multiplier A[3][3] using smartMulMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+product error: Numerical argument out of domain
+multiplicand B[3][2] using smartMulMatrix 
+       1       2
+       3       4
+       5       6
+multiplier A[3][3] using denseMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+product error: Numerical argument out of domain
+multiplicand B[3][2] using smartMulMatrix 
+       1       2
+       3       4
+       5       6
+multiplier A[3][3] using smartMulMatrix 
+       1       2       3
+       4       5       6
+       7       8       9
+product error: Numerical argument out of domain
+multiplicand B[3][2] using denseMatrix 
+       1       2
+       3       4
+       5       6
+multiplier B[3][2] using denseMatrix 
+       1       2
+       3       4
+       5       6
+product error: Numerical argument out of domain
+multiplicand B[3][2] using denseMatrix 
+       1       2
+       3       4
+       5       6
+multiplier B[3][2] using smartMulMatrix 
+       1       2
+       3       4
+       5       6
+product error: Numerical argument out of domain
+multiplicand B[3][2] using smartMulMatrix 
+       1       2
+       3       4
+       5       6
+multiplier B[3][2] using denseMatrix 
+       1       2
+       3       4
+       5       6
+product error: Numerical argument out of domain
+multiplicand B[3][2] using smartMulMatrix 
+       1       2
+       3       4
+       5       6
+multiplier B[3][2] using smartMulMatrix 
+       1       2
+       3       4
+       5       6
+product error: Numerical argument out of domain
+input matrix rand(5x5) using denseMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+transpose matrix 
+      -7      -1      -8       1       1
+       6       1       0      -2       6
+      -6       2      -8       8      -1
+      -6      -7       1      -4       3
+       1      -2      -8       0      -2
+------------
+input matrix rand(5x5) using smartMulMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+transpose matrix 
+      -7      -1      -8       1       1
+       6       1       0      -2       6
+      -6       2      -8       8      -1
+      -6      -7       1      -4       3
+       1      -2      -8       0      -2
+------------
+input matrix rand(5x6) using denseMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+transpose matrix 
+       3      -5       6      -8       5
+      -3       8       4      -7       7
+      -2      -3       7      -7      -2
+      -4      -5      -9       0      -1
+      -8      -4       5       0      -4
+      -3       5      -6       7      -8
+------------
+input matrix rand(5x6) using smartMulMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+transpose matrix 
+       3      -5       6      -8       5
+      -3       8       4      -7       7
+      -2      -3       7      -7      -2
+      -4      -5      -9       0      -1
+      -8      -4       5       0      -4
+      -3       5      -6       7      -8
+------------
+multiplicand rand(5x5) using denseMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+multiplier rand(5x5) using denseMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+product: rand(5x5) using denseMatrix  x  rand(5x5) using denseMatrix 
+      86     -18      53      21      27
+     -19      -3     -62      23     -15
+     113     -98     128      12      72
+     -73      12    -106      32     -59
+      -4      -6      40     -67       1
+------------
+multiplicand rand(5x5) using denseMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+multiplier rand(5x5) using smartMulMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+product: rand(5x5) using denseMatrix  x  rand(5x5) using smartMulMatrix 
+      86     -18      53      21      27
+     -19      -3     -62      23     -15
+     113     -98     128      12      72
+     -73      12    -106      32     -59
+      -4      -6      40     -67       1
+------------
+multiplicand rand(5x5) using smartMulMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+multiplier rand(5x5) using denseMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+product: rand(5x5) using smartMulMatrix  x  rand(5x5) using denseMatrix 
+      86     -18      53      21      27
+     -19      -3     -62      23     -15
+     113     -98     128      12      72
+     -73      12    -106      32     -59
+      -4      -6      40     -67       1
+------------
+multiplicand rand(5x5) using smartMulMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+multiplier rand(5x5) using smartMulMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+product: rand(5x5) using smartMulMatrix  x  rand(5x5) using smartMulMatrix 
+      86     -18      53      21      27
+     -19      -3     -62      23     -15
+     113     -98     128      12      72
+     -73      12    -106      32     -59
+      -4      -6      40     -67       1
+------------
+multiplicand rand(5x5) using denseMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+multiplier rand(5x6) using denseMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+product: rand(5x5) using denseMatrix  x  rand(5x6) using denseMatrix 
+     -34      94      -6      51      -2      37
+      50      54      66     -17      22     -37
+    -120     -71     -31     112      56     143
+      93      41      88     -66      40     -89
+     -67       6     -44     -23     -29      70
+------------
+multiplicand rand(5x5) using denseMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+multiplier rand(5x6) using smartMulMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+product: rand(5x5) using denseMatrix  x  rand(5x6) using smartMulMatrix 
+     -34      94      -6      51      -2      37
+      50      54      66     -17      22     -37
+    -120     -71     -31     112      56     143
+      93      41      88     -66      40     -89
+     -67       6     -44     -23     -29      70
+------------
+multiplicand rand(5x5) using smartMulMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+multiplier rand(5x6) using denseMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+product: rand(5x5) using smartMulMatrix  x  rand(5x6) using denseMatrix 
+     -34      94      -6      51      -2      37
+      50      54      66     -17      22     -37
+    -120     -71     -31     112      56     143
+      93      41      88     -66      40     -89
+     -67       6     -44     -23     -29      70
+------------
+multiplicand rand(5x5) using smartMulMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+multiplier rand(5x6) using smartMulMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+product: rand(5x5) using smartMulMatrix  x  rand(5x6) using smartMulMatrix 
+     -34      94      -6      51      -2      37
+      50      54      66     -17      22     -37
+    -120     -71     -31     112      56     143
+      93      41      88     -66      40     -89
+     -67       6     -44     -23     -29      70
+------------
+multiplicand rand(5x6) using denseMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+multiplier rand(5x5) using denseMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+product error: Numerical argument out of domain
+multiplicand rand(5x6) using denseMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+multiplier rand(5x5) using smartMulMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+product error: Numerical argument out of domain
+multiplicand rand(5x6) using smartMulMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+multiplier rand(5x5) using denseMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+product error: Numerical argument out of domain
+multiplicand rand(5x6) using smartMulMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+multiplier rand(5x5) using smartMulMatrix 
+      -7       6      -6      -6       1
+      -1       1       2      -7      -2
+      -8       0      -8       1      -8
+       1      -2       8      -4       0
+       1       6      -1       3      -2
+product error: Numerical argument out of domain
+multiplicand rand(5x6) using denseMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+multiplier rand(5x6) using denseMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+product error: Numerical argument out of domain
+multiplicand rand(5x6) using denseMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+multiplier rand(5x6) using smartMulMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+product error: Numerical argument out of domain
+multiplicand rand(5x6) using smartMulMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+multiplier rand(5x6) using denseMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+product error: Numerical argument out of domain
+multiplicand rand(5x6) using smartMulMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+multiplier rand(5x6) using smartMulMatrix 
+       3      -3      -2      -4      -8      -3
+      -5       8      -3      -5      -4       5
+       6       4       7      -9       5      -6
+      -8      -7      -7       0       0       7
+       5       7      -2      -1      -4      -8
+product error: Numerical argument out of domain
+denseMatrix x denseMatrix: utime: 2350, stime: 0, total: 2350
+denseMatrix x smartMulMatrix: utime: 2359, stime: 0, total: 2359
+smartMulMatrix x denseMatrix: utime: 1907, stime: 2, total: 1909
+smartMulMatrix x smartMulMatrix: utime: 1910, stime: 0, total: 1910
+
+#example of failing tests
+#(forced by initializing the row-column dot-product to 1, instead of 0).
+$ ./prj1 --pred --rand
+A[3][3] x A[3][3]: differs at [0][0]; expected 30, got 31
+A[3][3] x A[3][3]: differs at [0][0]; expected 30, got 31
+A[3][3] x B[3][2]: differs at [0][0]; expected 22, got 23
+A[3][3] x B[3][2]: differs at [0][0]; expected 22, got 23
+rand(5x5) x rand(5x5): differs at [0][0]; expected 86, got 87
+rand(5x5) x rand(5x5): differs at [0][0]; expected 86, got 87
+rand(5x5) x rand(5x6): differs at [0][0]; expected -34, got -33
+rand(5x5) x rand(5x6): differs at [0][0]; expected -34, got -33
+$ 

@@ -1,0 +1,109 @@
+cc -g -Wall -fms-extensions -std=c11 -I/home/anirtek/cs551-17s/include  -c -o abstract_matrix.o abstract_matrix.c
+In file included from dense_matrix.c:2:0,
+                 from abstract_matrix.c:6:
+dense_matrix.h:9:1: warning: declaration does not declare anything
+ } DenseMatrixFns;
+ ^
+dense_matrix.h:9:1: warning: no semicolon at end of struct or union
+dense_matrix.h: In function ‘newDenseMatrix’:
+dense_matrix.h:24:7: warning: comparison between pointer and integer
+   err == EINVAL;
+       ^~
+dense_matrix.h:24:7: warning: statement with no effect [-Wunused-value]
+   err == EINVAL;
+       ^
+In file included from abstract_matrix.c:6:0:
+dense_matrix.c: In function ‘getElement’:
+dense_matrix.c:39:28: warning: return makes integer from pointer without a cast [-Wint-conversion]
+     return matrix->elements[rowIndex * ncols + colIndex]; // how to access a value in an array here?
+            ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+dense_matrix.c: In function ‘setElement’:
+dense_matrix.c:47:51: error: assignment of read-only location ‘matrix->elements[rowIndex * ncols + colIndex]’
+     matrix->elements[rowIndex * ncols + colIndex] = data;
+                                                   ^
+In file included from abstract_matrix.c:6:0:
+dense_matrix.c: In function ‘mul’:
+dense_matrix.c:70:9: warning: implicit declaration of function ‘fprintf’ [-Wimplicit-function-declaration]
+         fprintf(stderr, "mul() : this nCols not equal to multiplier nRows\n");
+         ^~~~~~~
+dense_matrix.c:70:9: warning: incompatible implicit declaration of built-in function ‘fprintf’
+dense_matrix.c:70:9: note: include ‘<stdio.h>’ or provide a declaration of ‘fprintf’
+dense_matrix.c:70:17: error: ‘stderr’ undeclared (first use in this function)
+         fprintf(stderr, "mul() : this nCols not equal to multiplier nRows\n");
+                 ^~~~~~
+dense_matrix.c:70:17: note: each undeclared identifier is reported only once for each function it appears in
+dense_matrix.c: At top level:
+dense_matrix.c:90:1: error: redefinition of ‘newDenseMatrix’
+ newDenseMatrix(int nRows, int nCols, int *err) {
+ ^~~~~~~~~~~~~~
+In file included from dense_matrix.c:2:0,
+                 from abstract_matrix.c:6:
+dense_matrix.h:20:14: note: previous definition of ‘newDenseMatrix’ was here
+ DenseMatrix *newDenseMatrix(int nRows, int nCols, int *err)
+              ^~~~~~~~~~~~~~
+In file included from abstract_matrix.c:6:0:
+dense_matrix.c: In function ‘newDenseMatrix’:
+dense_matrix.c:93:9: warning: incompatible implicit declaration of built-in function ‘fprintf’
+         fprintf(stderr, "newDenseMatrix() : Memory allocation failure\n");
+         ^~~~~~~
+dense_matrix.c:93:9: note: include ‘<stdio.h>’ or provide a declaration of ‘fprintf’
+dense_matrix.c:93:17: error: ‘stderr’ undeclared (first use in this function)
+         fprintf(stderr, "newDenseMatrix() : Memory allocation failure\n");
+                 ^~~~~~
+dense_matrix.c:104:11: error: ‘MatrixImpl {aka struct <anonymous>}’ has no member named ‘fns’
+     matrix->fns = &matrixFns;
+           ^~
+dense_matrix.c: In function ‘getDenseMatrixFns’:
+dense_matrix.c:119:13: error: expected expression before ‘MatrixFns’
+     return &MatrixFns;
+             ^~~~~~~~~
+abstract_matrix.c: In function ‘transpose’:
+abstract_matrix.c:16:27: error: too few arguments to function ‘this->fns->getNRows’
+     int src_matrix_rows = this->fns->getNRows(this);
+                           ^~~~
+abstract_matrix.c:17:27: error: too few arguments to function ‘this->fns->getNCols’
+     int src_matrix_cols = this->fns->getNCols(this);
+                           ^~~~
+abstract_matrix.c:19:30: error: too few arguments to function ‘result->fns->getNRows’
+     int tagert_matrix_rows = result->fns->getNRows(result);
+                              ^~~~~~
+abstract_matrix.c:20:30: error: too few arguments to function ‘result->fns->getNCols’
+     int target_matrix_rows = result->fns->getNCols(result);
+                              ^~~~~~
+abstract_matrix.c:20:9: warning: unused variable ‘target_matrix_rows’ [-Wunused-variable]
+     int target_matrix_rows = result->fns->getNCols(result);
+         ^~~~~~~~~~~~~~~~~~
+abstract_matrix.c:19:9: warning: unused variable ‘tagert_matrix_rows’ [-Wunused-variable]
+     int tagert_matrix_rows = result->fns->getNRows(result);
+         ^~~~~~~~~~~~~~~~~~
+abstract_matrix.c: In function ‘getAbstractMatrixFns’:
+abstract_matrix.c:37:13: error: expected expression before ‘MatrixFns’
+     return &MatrixFns;
+             ^~~~~~~~~
+abstract_matrix.c: At top level:
+abstract_matrix.c:40:18: error: conflicting types for ‘matrixFns’
+ static MatrixFns matrixFns = {
+                  ^~~~~~~~~
+In file included from abstract_matrix.c:6:0:
+dense_matrix.c:80:16: note: previous definition of ‘matrixFns’ was here
+ DenseMatrixFns matrixFns = {
+                ^~~~~~~~~
+abstract_matrix.c:42:13: warning: initialization from incompatible pointer type [-Wincompatible-pointer-types]
+     .free = free_matrix,
+             ^~~~~~~~~~~
+abstract_matrix.c:42:13: note: (near initialization for ‘matrixFns.free’)
+In file included from abstract_matrix.c:6:0:
+dense_matrix.c: In function ‘getDenseMatrixFns’:
+dense_matrix.c:120:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+abstract_matrix.c: In function ‘getAbstractMatrixFns’:
+abstract_matrix.c:38:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+At top level:
+abstract_matrix.c:40:18: warning: ‘matrixFns’ defined but not used [-Wunused-variable]
+ static MatrixFns matrixFns = {
+                  ^~~~~~~~~
+<builtin>: recipe for target 'abstract_matrix.o' failed
+make: *** [abstract_matrix.o] Error 1
