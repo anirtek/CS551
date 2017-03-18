@@ -1,0 +1,234 @@
+%%%%%START-of-DOCUMENT%%%%%%%%%%%%%%%
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlength{\headheight}{13.6pt}
+
+\newcommand\question[3]{{\textbf{Solution #1 $\Rightarrow$} #2} \vspace{.10in}\\}
+\renewcommand\part[1]{\vspace{.10in}\textbf{(#1)}}
+\newcommand\algorithm{\vspace{.10in}\textbf{Complexity: }}
+\newcommand\correctness{\vspace{.10in}\textbf{Correctness: }}
+\newcommand\runtime{\vspace{.10in}\textbf{Running time: }}
+\pagestyle{fancyplain}
+\lhead{{\NAME\ (\ANDREWID)}}
+%\chead{\textbf{HW\HWNUM}}
+\rhead{\today}
+
+\begin{document}\raggedright
+\title{CS 551\\System Programming\\Homework 2}
+\date{}
+\maketitle
+
+%Section A==============Change the values below to match your information==================
+\newcommand\NAME{Aniruddha Tekade}  	% your name
+\newcommand\ANDREWID{B00618834}     	% your andrew id
+\newcommand\HWNUM{1}              	% the homework number
+%Section B==============Put your answers to the questions below here=======================
+% no need to restate the problem --- the graders know which problem is which, but replacing "The First Problem" with a short phrase will help you remember which problem this is when you read over your homeworks to study.
+\hrulefill
+%%==================================================================================================================
+
+\question{1} {Following mechanisms can be used for specified questions $\Rightarrow$}
+
+\begin{enumerate}
+  \item We can change the interface by adding just three simple things : 
+  	\begin{enumerate}
+  		\item Boolean flag for error checking (If this flag is set, error checking will be done.)
+  		\item Hashmap for storing the errors.
+  		\item Linking the new library to the existing one.
+  	\end{enumerate}
+  \item For the users who are only interested in the new changes in the library, they will be able to access it. 
+  \item Users who are interested in the string errors will have the boolean flag = true and will not have to run extra code for explicitly checking the erros.
+  \item The same flag functionality will be used by some users who have multiple obects alive. Due to linking of library to the previous implementation, the ojects from the client side would be able to access it.
+\end{enumerate}
+   
+\hrulefill
+%%==================================================================================================================
+
+\question{2} {Accessing a resource is generally a \texttt{critical section} in the system. And to access the critical section there are many solutions like to use the mutex (binary semaphores) or semaphores}
+
+If there are N interchangeable resources to be shared, we can use a simple locking mechanism on the shared resources and make processes interested to acquire exclusive access to wait untill the lock is available for them to acquire.
+\begin{verbatim}
+1.  while (lock is aquired)
+2.    wait();
+3.  if (lock is free)
+4.    Set the lock
+5.    <Enter into the critical section>
+6.    Processing
+7.    <Exit from the critical section>
+8.    Release the lock
+\end{verbatim}
+This mechanism is normally called as mutexes and is best solution to handle mutual access to resources to be shared between different processes.
+
+\hrulefill
+%%==================================================================================================================
+
+\question{3} {Given code snippet is : }
+
+\begin{verbatim}
+1. char c;
+2. int f() {
+3.     void *fP = &f;
+4.     void *cP = &c;
+5.     return ((cP < (void *)&cP)<<1) + (fP < (void *)&fP);
+6. }
+\end{verbatim}
+
+In the line\#5, the return statement has two logical statements that are returning two different additions. The first part which is \texttt{(cP < (void *)\&cP)<<1)} produces 2 and the second part \texttt{(fP < (void *)\&fP)} produces 1. 
+\newline \\
+\textbf{Reason $\Rightarrow$} While dealing with the pointers and their respective values, a variable \texttt{c} is allocated first in the memory and then the function \texttt{int f()}. After these allocation, we are defining pointers pointing to these relative entities ex. \texttt{c} has \texttt{cP} and \texttt{f()} as \texttt{fP} in this case. 
+\newline \\
+Since memory grows from lower addresses to higher addresses, it is very obvious that the address-value (integer or hexadecimal would not make any difference;) of \texttt{c} is smaller than its pointer \texttt{cP} and \texttt{f()} smaller than \texttt{fp}.
+\newline \\
+Therefore, first part produces 1 which is \textit{left shifted by 1 bit} and it becomes \textbf{2}  \& added to second part output \textbf{1} returning a total of \textbf{3}.
+
+\hrulefill
+%%==================================================================================================================
+
+\question{4} {This kind of situation can arise in \texttt{client-server architecture} implemented using pipe or a message passing from multiple children process to a single parent process.}
+
+Assuming that we are using \texttt{anonymous pipes} \& OS is POSIX-compliant in this regard, we can have following simple protocol $\Rightarrow$
+\begin{enumerate}
+	\item Set a \texttt{boolean} lock on pipe equals to 1 (available).
+	\item The writing process will check the lock availablity and write to it. Meanwhile the reading process is in sleep state.
+	\item If the lock is unavailable, writing process will wait untill it gets released by some other process.
+	\item After finishing the writing, it will signal the reading process and release the lock.
+	\item This process will go on untill there exists at least 1 reading or wiring process. 
+\end{enumerate}
+
+However, there can be some other approach to this problems which is as mentioned below $\Rightarrow$
+\begin{itemize}
+\item Write requests of \texttt{PIPE\_BUF} bytes or less shall not be interleaved with data from other processes doing writes on the same pipe. Writes of greater than \texttt{PIPE\_BUF} bytes may have data interleaved, on arbitrary boundaries, with writes by other processes, whether or not the \texttt{NO\_BLOCK} flag of the file status flags is set.
+  \item \texttt{PIPE\_BUF} is, by the way, guaranteed to be at least 512. But this size can be changes with a paramter and we can make sure that every process that is writing or reading from or to the pipe will contrain to the size of bytes.
+\end{itemize}
+
+\hrulefill
+%%==================================================================================================================
+
+\question{5} {Password re-hashing}
+
+When user logs in next time, we can use the password extension's \texttt{password\_verify()} function. If it does not succeed, the process falls back on the old MD5 hash algorithm. If the MD5 hash matches then we can rehash the password using  \texttt{blowfish\_hash()} and save it in the old hash's place. The sample code can be as below $\Rightarrow$ 
+\begin{verbatim}
+1.  if (password_verify(passwd, hash)) {
+2.      /**
+3.       * Logic if they are matched
+4.       */ 
+5.  } elseif (hash('MD5', passwd) == hash) {
+6.      /**
+7.       * Logic if they are matched
+8.       */ 
+9.      newHash = blowfish_hash(password);
+10.     /**
+11.      * Replace old hash with newHash
+12.      */ 
+13. } else {
+14.     fprintf(stderr, "Invalid Password!");
+15. }
+\end{verbatim}
+
+\hrulefill
+%%==================================================================================================================
+
+\question{6} {Initially, \texttt{uid} = 1000, \texttt{euid} = 1000, \texttt{saved set-user-ID} = 1000}
+
+\part{a} There is no change in the effective uid or set-user-ID.
+\texttt{uid} = 1000 \\
+\texttt{euid} = 1000 \\
+\texttt{saved set-user-ID} = 1000 
+
+
+\part{b} Since setuid bit is set, effective uid is going to be 2000.
+\texttt{uid} = 1000 \\
+\texttt{euid} = 2000 \\
+\texttt{saved set-user-ID} = 2000
+
+\part{c} setuid() sets the uid as well as effective uid of the process. And since we've exec() it, the same euid will be copied to the set-user-id. \\
+\texttt{uid} = 2000 \texttt{euid} = 2000 \texttt{saved set-user-ID} = 2000
+
+\part{d} This will set the effective uid as well as saved set-user-id.\\
+\texttt{uid} = 2000 \\
+\texttt{euid} = 1000 \\
+\texttt{saved set-user-ID} = 1000
+
+\part{e} This will set the effective and real uid. \\ 
+\texttt{uid} = 1000 \\
+\texttt{euid} = 2000 \\
+\texttt{saved set-user-ID} = 2000
+
+\part{f} This will set the real uid, effective uid and saved set user id = 1000.\\
+\texttt{uid} = 1000 \\
+\texttt{euid} = 1000 \\
+\texttt{saved set-user-ID} = 1000
+
+\hrulefill
+%%==================================================================================================================
+
+\question{7} {Following table describes the file access required as per the question $\Rightarrow$}
+
+\begin{center}
+\begin{tabular}{ c c c c c }
+               & \textbf{data1 R} & \textbf{data1 W} & \textbf{data2 R} & \textbf{data2 W} \\ 
+ u1 runs exec1 & N & N & Y & Y \\  
+ u2 runs exec1 & Y & Y & - & - \\
+ u1 runs exec2 & N & N & Y & Y \\
+ u2 runs exec2 & - & - & - & -  
+\end{tabular}
+\end{center}
+
+\hrulefill
+%%==================================================================================================================
+
+\question{8} {Setting up the ring communication structure with all IPC handled using anonymous pipes can be simply build as follows-} 
+
+\begin{itemize}
+  \item The \texttt{parent} communicates with the first child process through its file descriptor for writing.
+  \item This first process \texttt{P[i]} uses its file descriptor (for reading) to read the data that is sent by the parent.
+  \item It also uses its file descriptor (for reading) to send data to the second child, and this process continues from second child to third child and so on. (We may find the usage of \texttt{dup()} usefule for using the file desciptor)
+  \item This should be forming a ring topological structure between the processes. 
+  \item The last (child) process sends the data back to the parent process.
+\end{itemize}   
+To achieve this mechanism we can follow following simple steps $\Rightarrow$
+\begin{itemize}
+  \item \texttt{Parent} creates pipe for it to write to 1st child \texttt{P[0]} \& Parent keeps open the write end of pipe to \texttt{P[0]}.
+  \item Parent keeps open the read end of the pipe from Nth child.
+  \item For each child \texttt{P[i]} = \texttt{P[0], P[1], . . . P[(i+1)\%N]}, \texttt{Parent} creates output pipe for $i^{th}$ child to talk to $i+1^{th}$.
+  \item Parent forks $n^{th}$ child and $n^{th}$ child closes the write end of its input pipe and the read end of its output pipe.
+  \item $n^{th}$ child reads the data from previous child, process it (if any) \& writes new data to the output pipe, then exits.
+  \item Meanwhile, Parent closes both ends of the input pipe to the nth (except for the descriptors it must keep open), and loops back to create the n+1th child's pipe and then the child.
+\end{itemize}
+
+\hrulefill
+%%====================================================================================================================
+
+\question{9} {\texttt{execl()} can be used as the primitive function instead of \texttt{execve()}}
+
+The definition of this call is $\Rightarrow$ \texttt{int execl(const char *path, const char *arg0, ..., const char *argn, (char *)0);}
+
+The reason for this statement is that, most of the functions expect a pathname or a filename as the specification of the new program to be loaded. This basic requirement of every other function in the family of \texttt{exec()} can be fulfilled using \texttt{execl()} function since its can be customized with the number of parameters. 
+
+\hrulefill
+%%====================================================================================================================
+
+\question{10} {Discuss the validity}
+
+\part{a} \texttt{Valid}. Because when a pipe is no longer in use, there are chances of getting errors like \texttt{broken-pipe} which may stop the program exucution in progress accidently. Therefore, should always take care of closing the pipe ends whenever not in use.
+
+\part{b} \texttt{Valid} when, file is attributed with only three types of permission as far as users are concerned and has not been added by creator into any such user group which is administrative level. 
+\newline \\
+\texttt{Invalid} when, file is not set up with any kind of other group ids that are administrative level 
+
+\part{c} \texttt{Valid}. For example, when we login to the unix via local user, the programs like \texttt{terminal} and others are always started with \texttt{root} priviledges and we can use then. The basic reason behind this is that they are always started using the \texttt{effective uid} of the \texttt{root}.
+
+\part{d} \texttt{Valid}. It is true that when the execute (X) permission are set to a directory, the process can always apply \texttt{ls} command on it. 
+
+\part{e} \texttt{Valid}. After running \texttt{exec()} call, the process gets an effective uid. This effective uid is generally copied fro the owner of the file. 
+
+\hrulefill
+%%====================================================================================================================
+
+\end{document}

@@ -1,0 +1,180 @@
+#compilation
+$ make
+cc -g -Wall -std=gnu11 -I/home/umrigar/cs551-17s/include  -c -o main.o main.c
+cc -g -Wall -std=gnu11 -I/home/umrigar/cs551-17s/include  -c -o matrix_mul.o matrix_mul.c
+cc -g -Wall -std=gnu11 -I/home/umrigar/cs551-17s/include  -c -o matrix_test_data.o matrix_test_data.c
+cc main.o matrix_mul.o matrix_test_data.o -L /home/umrigar/cs551-17s/lib -lcs551 -o prj2
+
+#show usage
+$ ./prj2
+usage ./prj2 [OPTIONS] N_WORKERS [FILENAME...]
+  A test file consists of one or more matrices with each matrix
+  consisting of whitespace separated DESC NROWS NCOLS ENTRY...
+  If no --random or FILENAME specified then read test from stdin
+  OPTIONS are
+    --gold | -g
+	Only use guaranteed correct gold multiplication;
+	do not use test multiplication
+    --output | -o
+	for each test show multiplicand, multiplier and product matrices
+    --random NAME:NROWSxNCOLS | -r NAME:NROWSxNCOLS
+	generate random matrix with description "NAME:NROWSxNCOLS"
+	with NROWS rows and NCOLS columns
+    --seed SEED | -s SEED
+	Set seed of random number generator to SEED
+    --trace | -t
+	Generate trace of test matrix multiplication on stderr
+
+#gold multiplication: note no trace output even though -t specified
+$ echo mat2x2 2 2 1 1 1 1 | ./prj2 -g -t -o 4 
+multiplicand mat2x2 
+       1       1
+       1       1
+multiplier mat2x2 
+       1       1
+       1       1
+product: mat2x2  x  mat2x2 
+       2       2
+       2       2
+------------
+
+#test multiplication:  note trace produced.
+$ echo mat2x2 2 2 1 1 1 1 | ./prj2 -t -o 4 
+0[965]: [0]x[0] = 2
+0[965]: [0]x[1] = 2
+1[966]: [1]x[0] = 2
+1[966]: [1]x[1] = 2
+multiplicand mat2x2 
+       1       1
+       1       1
+multiplier mat2x2 
+       1       1
+       1       1
+product: mat2x2  x  mat2x2 
+       2       2
+       2       2
+
+#file containing test data
+[umrigar@bravo prj2-sol]$ cat matrix.dat
+A[2][3]
+2 3
+1 -2 -3
+4 -5  6
+
+B[3][4]
+3 4
+12 34 56 78
+ 1  2  3  4
+-1 -2 -3 -4
+
+#pairwise product of all matrices in matrix.dat; note 3/4 are not compatible
+$ ./prj2 -t -o  4 matrix.dat 
+multiplicand A[2][3] 
+       1      -2      -3
+       4      -5       6
+multiplier A[2][3] 
+       1      -2      -3
+       4      -5       6
+      49       019715696
+product error: Numerical argument out of domain
+0[983]: [0]x[0] = 13
+0[983]: [0]x[1] = 36
+0[983]: [0]x[2] = 59
+0[983]: [0]x[3] = 82
+1[984]: [1]x[0] = 37
+1[984]: [1]x[1] = 114
+1[984]: [1]x[2] = 191
+1[984]: [1]x[3] = 268
+multiplicand A[2][3] 
+       1      -2      -3
+       4      -5       6
+multiplier B[3][4] 
+      12      34      56      78
+       1       2       3       4
+      -1      -2      -3      -4
+product: A[2][3]  x  B[3][4] 
+      13      36      59      82
+      37     114     191     268
+------------
+multiplicand B[3][4] 
+      12      34      56      78
+       1       2       3       4
+      -1      -2      -3      -4
+multiplier A[2][3] 
+       1      -2      -3
+       4      -5       6
+      49       019715696
+       0       3       4
+product error: Numerical argument out of domain
+multiplicand B[3][4] 
+      12      34      56      78
+       1       2       3       4
+      -1      -2      -3      -4
+multiplier B[3][4] 
+      12      34      56      78
+       1       2       3       4
+      -1      -2      -3      -4
+       0       0      33       0
+product error: Numerical argument out of domain
+
+#multiply random 6x6 matrix by itself
+$ ./prj2 -t -o  -r rand6x6:6x6 4 
+0[988]: [0]x[0] = 8991
+0[988]: [0]x[1] = 2276
+0[988]: [0]x[2] = 2812
+0[988]: [0]x[3] = -4559
+0[988]: [0]x[4] = -1010
+0[988]: [0]x[5] = 7480
+0[988]: [4]x[0] = -4523
+0[988]: [4]x[1] = -10123
+0[988]: [4]x[2] = 8519
+0[988]: [4]x[3] = 5689
+0[988]: [4]x[4] = 775
+0[988]: [4]x[5] = 8382
+1[989]: [1]x[0] = 1283
+1[989]: [1]x[1] = -9401
+1[989]: [1]x[2] = 5986
+1[989]: [1]x[3] = 3005
+1[989]: [1]x[4] = -7450
+1[989]: [1]x[5] = -8316
+1[989]: [5]x[0] = 17083
+1[989]: [5]x[1] = -6300
+1[989]: [5]x[2] = -6988
+1[989]: [5]x[3] = 6763
+1[989]: [5]x[4] = 2182
+1[989]: [5]x[5] = 7053
+2[990]: [2]x[0] = -1993
+2[990]: [2]x[1] = 1917
+2[990]: [2]x[2] = 2570
+2[990]: [2]x[3] = -5502
+2[990]: [2]x[4] = -7897
+2[990]: [2]x[5] = -17690
+3[991]: [3]x[0] = -10211
+3[991]: [3]x[1] = -2968
+3[991]: [3]x[2] = -1672
+3[991]: [3]x[3] = 5683
+3[991]: [3]x[4] = 276
+3[991]: [3]x[5] = -9003
+multiplicand rand6x6:6x6 
+      64     -79      -5      81      22      86
+       1      46     -79      19      33     -90
+     -83      61     -68      31      44     -53
+     -41      65      17     -49     -15     -97
+      65     -28     -20      20     -63     -72
+      75      77     -51     -53      35      47
+multiplier rand6x6:6x6 
+      64     -79      -5      81      22      86
+       1      46     -79      19      33     -90
+     -83      61     -68      31      44     -53
+     -41      65      17     -49     -15     -97
+      65     -28     -20      20     -63     -72
+      75      77     -51     -53      35      47
+product: rand6x6:6x6  x  rand6x6:6x6 
+    8991    2276    2812   -4559   -1010    7480
+    1283   -9401    5986    3005   -7450   -8316
+   -1993    1917    2570   -5502   -7897  -17690
+  -10211   -2968   -1672    5683     276   -9003
+   -4523  -10123    8519    5689     775    8382
+   17083   -6300   -6988    6763    2182    7053
+------------
+$ 

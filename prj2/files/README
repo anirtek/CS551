@@ -1,0 +1,21 @@
+Name:		ANIRUDDHA P TEKADE
+B-Number:	B00618834
+Email:		atekade1@binghamton.edu
+
+Protocol Used : 
+1. All he new nWorker processes are created in newMatrixMul()
+2. There are 2 pipes used ==> fd1[] & fd2[].
+3. For every worker process, write-end is closed in fd1[] and read-end is closed in fd2[];
+4. Parent has read-end closed in fd1[] & write-end closed in fd2[].
+5. Parent process reads the data from a[n1][n2] & b[n2][n3] and sends to worker process
+6. Each worker process performs the calculation and returns the product to parent
+7. Parent receives the product and writes to c[i][j].
+
+======================================================================================
+
+Sometimes while running the 6x6 size matrix, there occurs unwanted messages which are
+errorsome logs. However it generates the proper output.
+
+There are no broker pipe cases in my program.
+
+======================================================================================				

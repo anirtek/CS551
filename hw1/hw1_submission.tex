@@ -1,0 +1,316 @@
+%%%%%START-of-DOCUMENT%%%%%%%%%%%%%%%
+\documentclass[12pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlength{\headheight}{13.6pt}
+
+\newcommand\question[3]{\vspace{.25in}{#1: #2}\vspace{.5em}\vspace{.10in}\\}
+\renewcommand\part[1]{\vspace{.10in}\textbf{(#1)}}
+\newcommand\algorithm{\vspace{.10in}\textbf{Complexity: }}
+\newcommand\correctness{\vspace{.10in}\textbf{Correctness: }}
+\newcommand\runtime{\vspace{.10in}\textbf{Running time: }}
+\pagestyle{fancyplain}
+\lhead{{\NAME\ (\ANDREWID)}}
+%\chead{\textbf{HW\HWNUM}}
+\rhead{\today}
+
+\begin{document}\raggedright
+\title{CS 551\\Homework 1}
+\date{}
+\maketitle
+
+%Section A==============Change the values below to match your information==================
+\newcommand\NAME{Aniruddha Tekade}  	% your name
+\newcommand\ANDREWID{B00618834}     	% your andrew id
+\newcommand\HWNUM{1}              	% the homework number
+%Section B==============Put your answers to the questions below here=======================
+% no need to restate the problem --- the graders know which problem is which, but replacing "The First Problem" with a short phrase will help you remember which problem this is when you read over your homeworks to study.
+\hrule
+\question{1}{On a particular C system a \texttt{short} occupies 2 bytes with an alignment restriction that it must be stored at an address which is divisible by 2. Discuss how you would proceed to tighten this alignment restriction to force a particular \texttt{short} entity to always be stored at an address divisible by 8. Document any assumptions in your solution.} 
+\\
+\textbf{Assumption:} The target system architecture has natural alignment support. we refer to as natural alignment: \textit{When accessing N bytes of memory, the base memory address must be evenly divisible by N}, i.e. \texttt{addr \% N == 0}.
+\newline \\
+Because, a system may have unaligned memory access i.e. we try to read N bytes of data starting
+from an address that is not evenly divisible by N (i.e. \texttt{addr \% N != 0}). Therefore there are 2 ways by which we can achieve this : 
+\begin{itemize}
+\item \textbf{u64} $\Rightarrow$ with the above asumption, we can rely on compiler that it will always allocate memory to the short only at the addresses with a start divisible by 8. Because, \texttt{u8} is 1 byte and as per the requirement of this problem, we need an address start that is divisible by 8. So, wherever we are defining a \texttt{short}, we will always define it as \texttt{u64 short var;}. \newline \\ This is a safe way as compiler handles it and UNIX's Kernel Programming also includes this with guarantee the feature of proper alignment as per the requirement of the program code.
+ \item \textbf{manual padding of bytes} $\Rightarrow$ programmer has to define the number of padding bits so as to maintain the alignment of address divisible by 8. This is not an advisable way as the usual padding that is done is by allocating memory to \texttt{char} since it takes only 1 byte. But this technique may lead to memory leaks making programmer handel them first.
+\end{itemize}
+\begin{center}
+\line(1,0){470}
+\end{center}
+%%=============================================================================================
+%%============================================================================================
+
+\question{2}{Describe in English the types of the following variables. Identify any types which are invalid:}
+
+\part{a} \texttt{Shape* a, b;} 
+\\ 
+\textbf{Explanation $\Rightarrow$} \texttt{a} is pointer to the structure \texttt{Shape} and b is structure object. This is a \texttt{valid} statement provided structure definition is available. But \texttt{b} can become \texttt{invalid} if there is no stucture definition present and compiler will know that the the storage size of \texttt{b} is unknown. To resolve this issue we can either modify the statement as \texttt{Shape* a, * b;} or define the structure.
+
+\part{b} \texttt{const Shape *(fs[])(double);}
+\\
+\textbf{Explanation $\Rightarrow$} \texttt{Invalid Statement}. Because while attempting to decode the complex declaration, compiler will know that \texttt{fs} is an array to a function that takes   single argument which of type dpuble. But the \texttt{*} specified before function \texttt{(fs[])} will generate an error as it expectes the return type of the function. Looking at the statement seems that it returns the stucture \texttt{Shape} but compiler throws an error because of illegal usage of pointer.
+
+\part{c} \texttt{const Shape (*fs[])(double);}
+\\
+\textbf{Explanation $\Rightarrow$} \texttt{fs} is array of pointer to a function that takes sing argument which is of type double and returns const structure \texttt{Shape}. 
+
+\part{d} \texttt{Shape *const p;} 
+\\
+\textbf{Explanation $\Rightarrow$} \texttt{p} is a const pointer to a structure \texttt{Shape} and is a legal legal declaration for compiler.
+
+\part{e} \texttt{int (*cmps[10])(const Shape *, const Shape *);}
+\\
+\textbf{Explanation $\Rightarrow$} \texttt{cmps} is an array of 10 pointers to a function which takes two arguments which are const pointer to the structure \texttt{Shape} and return an interger. This is a legal declaration.
+\vspace{-5mm}
+\begin{center}
+\line(1,0){470}
+\end{center}
+\vspace{-5mm}
+%%=============================================================================================
+%%=============================================================================================
+
+\question{3}{A function \texttt{f()} takes a single argument and returns a single value. The type of the single argument to \texttt{f()} is a pointer to a function which takes an unspecified number of arguments and returns a pointer to a \texttt{const Shape}. The value returned by \texttt{f()} is a pointer to an array of pointers to functions which take a single int argument and return a single \texttt{Shape} result.} 
+
+\part{a} Give a declaration for \texttt{f()} using auxiliary \texttt{typedef}’s.
+
+\begin{verbatim}
+    Shape *((*[])(int)) f(const Shape* (*) ())
+\end{verbatim}
+
+\part{b} Give a declaration for \texttt{f()} without using auxiliary \texttt{typedef}’s.
+\begin{verbatim}
+    struct *((*[])(int)) f(const struct* (*) ()) 
+\end{verbatim}
+%%=============================================================================================
+%%=============================================================================================
+
+\question{4} {Identify bugs and inadequacies in the following function.}
+
+\begin{verbatim}
+/** Return first line read from file named fileName.
+* terminating newline is not returned.
+*/
+char *
+getFirstLine(char *fileName)
+{
+    int maxLine = 1024;
+    char line[maxLine];
+    FILE *in = fopen(fileName, "r");
+    char *p = line;
+    fgets(line, maxLine, in);
+    char *p = line;
+    if (line[strlen(line)] != 10) { //line[] too small, alloc dynamically
+        char *p = malloc(sizeof(2*maxLine));
+        fgets(p, 2*maxLine, in);
+    } 
+    p[strlen(line)] = 0; //replace newline with NUL char
+    return p;
+}
+\end{verbatim}
+You should assume that all required header files have been included.
+\\
+Following bugs and inadequacies are present in the above code sample - 
+\begin{itemize}
+	\item Pointer \texttt{p} is getting redefined which is not legal for compiler
+	\item The pointer \texttt{p} that is being returned with a \texttt{0} at the end of the file which is not a good practice of file handling. 
+	\item Although it is not a problematic but having \texttt{0} instead of \texttt{NULL} at the end of the file can cause problems for future usage of the file.
+\end{itemize}
+\vspace{-5mm}
+\begin{center}
+\line(1,0){470}
+\end{center}
+\vspace{-5mm}
+%==============================================================================================
+%==============================================================================================
+
+\question{5} {Given an instance of class \texttt{C} in a classical OOPL, instances of classes totally unrelated to \texttt{C} can have \texttt{public} access to the instance variables of \texttt{C}. The techniques discussed in class for simulating OOP in \texttt{C} in the oo-shapes example and prj1 do not allow such access, limiting access to the instance variables of \texttt{C} solely to the instances of \texttt{C}. How would you modify the techniques to allow access similar to \texttt{public}?}
+
+\textbf{Explanation} $\Rightarrow$ To modify the access to the instances of unrealted classes to \texttt{C}, I think we can take following simple possible approach - 
+\begin{enumerate}
+	\item Add a \textit{function pointer} with unspecified number of arguments like \texttt{(*)()} as a member into the class \texttt{C}.
+	\item This will make the function pointer available to all the instances of class. 
+	\item Define the classes and their respective instances and pass the \textit{function pointer} to its methods. Automatically, the instances of the required class \texttt{C} will be accessible to the new instance of the class totally unrealted to C.
+\end{enumerate}
+\begin{center}
+\line(1,0){470}
+\end{center} 
+%==============================================================================================
+%==============================================================================================
+
+\question{6} {How would you extend the techniques discussed in class for simulating OOP in C in the oo-shapes example and prj1 to allow for interfaces. Specifically, how would you make it possible for a client to take a \texttt{Shape} and treat is as a \texttt{DrawableInterface} where \texttt{DrawableInterface} will reference the following functions:}
+
+\begin{verbatim}
+typedef struct {
+    void (*draw)(DrawableInterface *drawable, GraphicsContext *ctx);
+} DrawableFns;
+\end{verbatim} 
+for some graphics context \texttt{ctx}. 
+
+For example, there may be a inheritance hierarchy like \texttt{WireFrame} different from the \texttt{Shape} hierarchy which may also implement a \texttt{DrawableInterface}.
+\newline \newline
+Like the rest of the techniques, using a \texttt{Shape} as a \texttt{DrawableInterface} may require that the client follow certain rules and need not be as seamless as in a real OOPL.
+
+\textbf{Explanation} $\Rightarrow$ To use \texttt{Shape} as an \texttt{DrawableInterface}, we should add the declaration specified in the question to the object of the inherited class. For instance if \texttt{Shape} is being inherited by the class \texttt{Circle}, then we add the pointer to function defining \texttt{DrawableInterface}. This is realized as follows - 
+\begin{itemize}
+    \item \textbf{Assumption} $\Rightarrow$ \texttt{oo-shape} code discussed in the class is being considered as a basis to this question. Also, \texttt{Circle} is the derived class.
+    \item We define a forward reference for the \texttt{DrawableInteface} in the \texttt{Shape.h} as follows - 
+    		\begin{verbatim}
+    		struct DrawableFns; //forward reference
+    		
+    		typedef struct {  //adding above structure
+    		    void (*draw)(DrawableInterface *drawable, GraphicsContext *ctx);
+    		} DrawableFns;
+    		
+    		/*Adding reference of above structure into the Shape*/
+    		typedef struct Shape {
+    		    ShapeFns *fns;
+    		    DrawableFns *dfns;
+    		} Shape;
+    		\end{verbatim}
+    	\item Now, just in case, if \texttt{Circle.h} wants to use the \texttt{Shape} as its interface, it can create an object of its own and include reference to \texttt{Shape} as follows - 
+    	\begin{verbatim}
+    	typedef struct CircleFns CircleFns;
+    	
+    	typedef struct {
+    	    CircleFns *fns;
+    	} Circle;
+    	
+    	struct CircleFns {
+    	    ShapeFns;    //using -fms-extensions
+    	    DrawableFns;     //using -fms-extension
+    	};
+	\end{verbatim}   
+	\item To access the above interface from anywhere, we can just create an object of the structure and use the \texttt{Shape} as \texttt{DrawableInterface}. For example - 
+	\begin{verbatim}
+	typedef struct {
+	    Circle;    //using -fms-extension
+	    double radius;
+	} circleObject;
+	\end{verbatim}
+	\item We also define and access the method \texttt{draw()} in the \texttt{Circle.c} class -  
+	\begin{verbatim}
+	void draw(DrawableInterface *drawable, GraphicsContext *ctx)
+	{
+	    // contains logic for drawing the shapes of different kind
+	}
+	\end{verbatim}
+\end{itemize}  
+\vspace{-5mm}
+\begin{center}
+\line(1,0){470}
+\end{center}
+%\vspace{-mm}
+%==============================================================================================
+%==============================================================================================
+
+\question{7} {Real OOPL’s protect objects from invalid access. For example, given the Java \texttt{class:}}
+
+\begin{verbatim}
+class Circle extends Shape {
+    private final double radius;
+    Circle(double r) { radius = r; }
+    double getRadius() { return radius; }
+}
+\end{verbatim}
+[For those unfamiliar with Java, the above declares Circle to be a subclass of Shape with all Circle instances having a single field radius which cannot be changed (final) once the instance has been constructed (using the Circle() constructor)].
+\newline \\
+With normal Java semantics, is impossible for a client of Circle to change the radius of a Circle instance once it has been constructed (ignoring reflection which makes a mockery of things like final declarations).
+\newline \\
+Since C is not a OOPL, it makes no such guarantees. Show how a client of Circle (implemented as in the oo-shapes example discussed in class) could modify the radius of a Circle instance after constructing it. Specifically, you should be able to show how you would achieve something like this:
+\begin{verbatim}
+         const Circle *circle1 = newCircle(1);  //radius is 1
+         //your code here (cannot change circle1 pointer)
+         printf("created circle1 = circle(radius = %g)\n",
+                circle1->fns->radius(circle1));
+\end{verbatim}
+and have it print created \texttt{circle1 = circle(radius = 2)}. \newline \\
+You may assume that the client has read-only access to all the source code implementing Shape's, Circle's, etc.
+\newline \\
+\textbf{Explanation} $\Rightarrow$ This can be achieved by returning a new circle with specified radius by client as follows - 
+\begin{itemize}
+\item First of all we will have to define a structure including \texttt{struct Circle} as follow - \begin{verbatim}
+struct CircleObject {
+    struct Circle; // this is allowed due to -fms-extension in C
+    double radius;
+};
+\end{verbatim}
+\item And then defining the method that returns the radius of the constructed circle as follows - 
+\begin{verbatim}
+struct Circle* newCircle(double r){
+    struct CircleObject *circle = malloc(sizeof(struct CircleObject));
+    if(!cirlce) { //validation if malloc has failed
+         // error message    
+    }
+    circle->radius = r; //which is value requested by client of Circle
+    return (struct Circle *) circle;
+}
+\end{verbatim}
+\item This ensures that any value requested by the client for the radius can be set up and the structre pointer is retured back.
+\end{itemize}
+\begin{center}
+\line(1,0){470}
+\end{center}
+%%=========================================================================
+%%=========================================================================
+
+\question{8} {Some languages permit lazy evaluation. How would you implement a restricted form of \textit{lazy evaluation} in C. A motivating example follows:}
+
+Consider an array of function pointers used as shown below:
+\begin{verbatim}
+        int (*fns[])(int exp) = { ... };
+
+         int p = ...;
+         int s = 0;
+         for (int i = 0; i < sizeof(fns)/sizeof(fns[0]); i++) {
+           int (*f)(int) = fns[i];
+           int exp = ...; //compute exp(p) for some param p.
+           s += f(exp);
+         }
+\end{verbatim}
+Unfortunately, under some situations, the computation for exp blows up (maybe a division by zero or referencing a NULL pointer). It turns out that the knowledge needed to implement a check to see if exp(p) is dangerous is not available at the level of the above code but is available within each individual function. But since exp is evaluated before the call to the function, using the check within the function would be too late. This could be avoided by using lazy evaluation of exp.
+\newline \\
+How would you set things up so as to delay the evaluation of exp(p) until after an individual function has been able to run the check to ensure that it is safe. You may change both the above code as well as the interface and implementation of the individual functions in the array.
+\newline \\
+\textbf{Explanation} $\Rightarrow$ The \textit{lazy evaluation} can be forced by changing the type of argument of function \texttt{f()} to \texttt{void *} i.e a \textit{generic pointer}. Becuase of this implementation, when the value of \texttt{exp(p)} is expcted, the evaluation will be delayed. 
+\newline \\
+The altered code snippet will look like this - 
+\begin{verbatim}
+        int (*fns[])(void* exp) = { ... }; //changed type of argument
+
+         int p = ...;
+         int s = 0;
+         for (int i = 0; i < sizeof(fns)/sizeof(fns[0]); i++) {
+           int (*f)(int) = fns[i];
+           void* exp = ...; //changed from int to void* 
+                            //compute exp(p) for some param p
+           s += f(exp);
+         }
+\end{verbatim}
+\vspace{-5mm} 
+\begin{center}
+\line(1,0){470}
+\end{center}
+\vspace{-5mm}
+%%============================================================================
+%%============================================================================
+
+\question{9} {Discuss the validity of the following statements:}
+
+\part{a} \textbf{Not Valid}. Because when a function call is made to the function \texttt{f()}, the C compiler tries to match the definition of the function and the inconsistency is resolved. Redefining the prototype also widens the scope of the prototype in some conditions. Hence redefined prototype is acceptable.
+
+\part{b} \textbf{Valid}. Because \texttt{stderr} returns just the pointer to the textual representation of the current error code/value. Secondly it is used with fprintf with the syntax \texttt{fprintf(stderr, <string>, <values to print> ...);}. So its the function \texttt{fprintf()}'s responsiblity to access the stream and print the error. Therefore there is not need to unbuffer the \texttt{stderr}. 
+
+\part{c} \textbf{Not Valid}. Because \texttt{malloc()} randomly allocates memory to the character variable. Although it is fine for a single character variable, this does not make helpful approach in the case an array of characters i.e. a \texttt{string}. So accessing the memory may become difficult and also it is inefficient.
+
+\part{d} \textbf{Valid}. Because \texttt{NULL} is macro defined in \texttt{<stddef.h>} and several other standard header files that implements it as \texttt{null pointer constant}. So the expansion of \texttt{NULL} is either \texttt{0} or \texttt{((void *)0)}. Therefore a literal \texttt{0}, when used in a context of pointers, it always evaluates to a \texttt{NULL} pointer.
+
+\part{e} \textbf{Valid}. Because both text and binary files are treated in the same way by Unix file handling mechanisms. However using the appropriate mode may improve the portability in the input and output operations for a particula type of file. Based on the environment in which a file gets opened, some special character conversion may occur in input/output operations in text mode of the file. This feature actually makes changes according to a system-specific file format. However some environment may not change it.
+
+\end{document}

@@ -1,0 +1,247 @@
+<html>
+<head>
+<title>CS 451 / 551 Homework 1 </title>
+</head>
+<body bgcolor="#ffffff">
+<h1 align="center">CS 451 / 551 Homework 1 </h1>
+<pre>
+<b>Due</b>: Feb 15                                                 <b>Max Points</b>: 100
+</pre>
+<p>
+To be turned in on paper in class.
+</p>
+<p>
+Please remember to justify all answers.
+</p>
+<p>
+<b>Important Reminder</b> As per the course Academic Honesty <a href="../../misc/academic-honesty-statement/academic-honesty-statement.pdf">Statement</a>,
+cheating of any kind will minimally result in receiving an F letter
+grade for the entire course.
+</p>
+<p>
+In questions (2) and (3), assume that <tt>Shape</tt> has been <tt>typedef</tt>'d
+to a suitable <tt>struct</tt>.
+</p>
+<ol type="1">
+<p><li>
+On a particular C system a <tt>short</tt> occupies 2 bytes with an
+      alignment restriction that it must be stored at an address
+      which is divisible by 2.  Discuss how you would proceed to
+      tighten this alignment restriction to force a particular <tt>short</tt>
+      entity to always be stored at an address divisible by 8.
+      Document any assumptions in your solution. <i>5-points</i>
+</p>
+<p><li>
+Describe in English the types of the following variables.  Identify
+     any types which are invalid: <i>15-points</i>
+<ol type="a">
+<p><li>
+<tt>Shape* a, b;</tt>
+</p>
+<p><li>
+<tt>const Shape *(fs[])(double);</tt>
+</p>
+<p><li>
+<tt>const Shape (*fs[])(double);</tt>
+</p>
+<p><li>
+<tt>Shape *const p;</tt>
+</p>
+<p><li>
+<tt>int (*cmps[10])(const Shape *, const Shape *);</tt>
+</p>
+</ol>
+</p>
+<p><li>
+A function <tt>f()</tt> takes a single argument and returns a single
+      value.  The type of the single argument to <tt>f()</tt> is a pointer to
+      a function which takes an unspecified number of arguments and
+      returns a pointer to a <tt>const Shape</tt>.  The value returned by
+      <tt>f()</tt> is a pointer to an array of pointers to functions which
+      take a single <tt>int</tt> argument and return a single <tt>Shape</tt>
+      result. <i>10-points</i>
+<ol type="a">
+<p><li>
+Give a declaration for <tt>f()</tt> using auxiliary <tt>typedef</tt>'s.
+</p>
+<p><li>
+Give a declaration for <tt>f()</tt> without using auxiliary <tt>typedef</tt>'s.
+</p>
+</ol>
+</p>
+<p><li>
+Identify bugs and inadequacies in the following function.
+<pre>
+      /** Return first line read from file named fileName.  The
+       *  terminating newline is not returned.
+       */
+      char *
+      getFirstLine(char *fileName)
+      {
+         int maxLine = 1024;
+         char line[maxLine];
+         FILE *in = fopen(fileName, "r");
+         char *p = line;
+         fgets(line, maxLine, in);
+         char *p = line;
+         if (line[strlen(line)] != 10) { //line[] too small, alloc dynamically
+           char *p = malloc(sizeof(2*maxLine));
+           fgets(p, 2*maxLine, in);
+         }
+         p[strlen(line)] = 0;  //replace newline with NUL char
+         return p;
+      }
+</pre>
+</p>
+<blockquote>
+<p>
+      You should assume that all required header files have been included.
+     <i>15-points</i>
+</p>
+</blockquote>
+<p><li>
+Given an instance of class <tt>C</tt> in a classical OOPL, instances of
+      classes totally unrelated to <tt>C</tt> can have <tt>public</tt> access to the
+      instance variables of <tt>C</tt>.  The techniques discussed in class
+      for simulating OOP in C in the oo-shapes example and <a href="../../projects/prj1/prj1.html">prj1</a> do not allow such access,
+      limiting access to the instance variables of C solely to the
+      instances of C.  How would you modify the techniques to allow
+      access similar to <tt>public</tt>?  <i>10-points</i>
+</p>
+<p><li>
+How would you extend the techniques discussed in class for
+      simulating OOP in C in the oo-shapes example and <a href="../../projects/prj1/prj1.html">prj1</a> to allow for interfaces.
+      Specifically, how would you make it possible for a client to
+      take a <tt>Shape</tt> and treat is as a <tt>DrawableInterface</tt> where
+      <tt>DrawableInterface</tt> will reference the following functions:
+<pre>
+      typedef struct {
+        void (*draw)(DrawableInterface *drawable, GraphicsContext *ctx);
+      } DrawableFns;
+</pre>
+<p>
+      for some graphics context <tt>ctx</tt>.
+</p>
+<p>
+      For example, there may be a inheritance hierarchy like
+      <tt>WireFrame</tt> different from the <tt>Shape</tt> hierarchy which may also
+      implement a <tt>Drawable</tt> interface.
+</p>
+<p>
+      Like the rest of the techniques, using a <tt>Shape</tt> as a
+      <tt>DrawableInterface</tt> may require that the client follow certain
+      rules and need not be as seamless as in a real OOPL. <i>10-points</i>
+</p>
+</p>
+<p><li>
+Real OOPL's protect objects from invalid access.  For example,
+      given the Java <tt>class</tt>:
+<pre>
+      class Circle extends Shape {
+        private final double radius;
+
+        Circle(double r) { radius = r; }
+
+        double getRadius() { return radius; }
+      }
+</pre>
+<p>
+      [For those unfamiliar with Java, the above declares <tt>Circle</tt>
+      to be a subclass of <tt>Shape</tt> with all <tt>Circle</tt> instances
+      having a single field <tt>radius</tt> which cannot be changed
+      (<tt>final</tt>) once the instance has been constructed (using
+      the <tt>Circle()</tt> constructor)].
+</p>
+<p>
+      With normal Java semantics, is impossible for a client of
+      <tt>Circle</tt> to change the radius of a <tt>Circle</tt> instance once it has
+      been constructed (ignoring reflection which makes a mockery of
+      things like <tt>final</tt> declarations).
+</p>
+<p>
+      Since C is not a OOPL, it makes no such guarantees.  Show how a
+      client of <tt>Circle</tt> (implemented as in the <tt>oo-shapes</tt> example
+      discussed in class) could modify the radius of a <tt>Circle</tt>
+      instance after constructing it.  Specifically, you should be
+      able to show how you would achieve something like this:
+</p>
+<pre>
+         const Circle *circle1 = newCircle(1);  //radius is 1
+         //your code here (cannot change circle1 pointer)
+         printf("created circle1 = circle(radius = %g)\n",
+                circle1-&gt;fns-&gt;radius(circle1));
+</pre>
+</p>
+<blockquote>
+<p>
+     and have it print <tt>created circle1 = circle(radius = 2)</tt>.
+</p>
+<p>
+     You may assume that the client has <b>read-only</b> access to all the
+     source code implementing <tt>Shape</tt>'s, <tt>Circle</tt>'s, etc. <i>10-points</i>
+</p>
+</blockquote>
+<p><li>
+Some languages permit <i>lazy evaluation</i>.  How would
+      you implement a restricted form of lazy evaluation in C.  A
+      motivating example follows:
+<p>
+      Consider an array of function pointers used as shown below:
+</p>
+<pre>
+        int (*fns[])(int exp) = { ... };
+
+         int p = ...;
+         int s = 0;
+         for (int i = 0; i &lt; sizeof(fns)/sizeof(fns[0]); i++) {
+           int (*f)(int) = fns[i];
+           int exp = ...; //compute exp(p) for some param p.
+           s += f(exp);
+         }
+</pre>
+<p>
+      Unfortunately, under some situations, the computation for <tt>exp</tt>
+      blows up (maybe a division by zero or referencing a <tt>NULL</tt>
+      pointer).  It turns out that the knowledge needed to implement a
+      check to see if <tt>exp(p)</tt> is dangerous is not available at the
+      level of the above code but is available within each individual
+      function.  But since <tt>exp</tt> is evaluated before the call to the
+      function, using the check within the function would be too late.
+      This could be avoided by using lazy evaluation of <tt>exp</tt>.
+</p>
+<p>
+      How would you set things up so as to delay the evaluation of
+      <tt>exp(p)</tt> until after an individual function has been able
+      to run the check to ensure that it is safe.  You may change
+      both the above code as well as the interface and implementation
+      of the individual functions in the array.  <i>10-points</i>
+</p>
+</p>
+<p><li>
+Discuss the validity of the following statements: <i>15-points</i>
+<ol type="a">
+<p><li>
+If a C function is declared with prototype <tt>void f()</tt>
+           but then defined with prototype <tt>void f(int a)</tt>, then
+           the compiler will signal an error about the inconsistency
+           in the prototypes.
+</p>
+<p><li>
+The <tt>stderr</tt> stream need not always be unbuffered.
+</p>
+<p><li>
+It is fine to <tt>malloc()</tt> a single character at a time.
+</p>
+<p><li>
+<tt>NULL</tt> and <tt>0</tt> are equivalent in pointer contexts.
+</p>
+<p><li>
+In the standard I/O library on Unix systems, there is no
+           noticeable difference between opening a file as binary versus
+           opening it as text.
+</p>
+</ol>
+</p>
+</ol>
+</body>
+</html>
